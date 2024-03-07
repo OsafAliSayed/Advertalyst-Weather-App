@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 
-from .models import City
+from .models import City, Weather
 from .key import KEY
 
 
@@ -27,7 +27,26 @@ def weather(request):
         url = f'https://api.weatherapi.com/v1/current.json?key={KEY}&q={city}'
         response = requests.get(url)
         if response.status_code == 500:
-            return JsonResponse({'error': 'Internal Server Error'}, status=500)
+            # check if weather information has been stored locally
+            try:
+                # create new obj here
+                weather = Weather.objects.get(city=city)
+                obj = {
+                    "name": weather.city.name,
+                    "country": weather.city.country,
+                    "temperature": weather.temperature,
+                    "humidity": weather.humidity,
+                    "condition": weather.condition,
+                    "icon_url": weather.icon_url
+                }
+                # append to objs list
+                objs.append(obj)
+                continue
+            # otherwise throw error
+            except Weather.DoesNotExist:
+                return JsonResponse({'error': 'Internal Server Error'}, status=500)
+            
+        #  throw error if city name is invalid or not given
         if response.status_code != 200:
             return JsonResponse({'error': 'Bad Request(Invalid City names)'}, status=400)
         
