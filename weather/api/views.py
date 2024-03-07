@@ -36,7 +36,7 @@ def weather(request):
         obj = {
             "name": response['location']['name'],
             "country": response['location']['country'],
-            "temparature": response['current']['temp_c'],
+            "temperature": response['current']['temp_c'],
             "humidity": response['current']['humidity'],
             "condition": response['current']['condition']['text'],
             "icon_url": response['current']['condition']['icon'],
