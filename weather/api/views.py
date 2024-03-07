@@ -1,9 +1,15 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 
+from django.views import View
+from django.conf import settings
+
+import jwt
 import json
 import requests
+from datetime import datetime, timedelta
 
 from .models import City, Weather
 from .key import KEY
@@ -73,7 +79,6 @@ def city(request, id):
     if request.method == 'GET':
         try:
             city = City.objects.get(id=id)
-            print(city)
             return JsonResponse({"example" : {
                 "id": city.id,
                 "name": city.name, 
@@ -131,3 +136,21 @@ def city(request, id):
             return JsonResponse({ "example": {
                 "error": "City not found"
             }}, status=404)
+            
+@csrf_exempt        
+def auth(request):
+    if request.method == 'POST':
+        response = json.loads(request.body.decode('utf-8'))
+        username = response['username']
+        password = response['password'] 
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            payload = {
+                'user_id': user.id,
+                'exp': datetime.utcnow() + timedelta(minutes=60)
+            }
+            jwt_token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
+            print(jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256']))
+            return JsonResponse({'token': jwt_token})
+        else:
+            return JsonResponse({'error': 'Invalid credentials'}, status=400)

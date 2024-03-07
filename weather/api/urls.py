@@ -4,5 +4,6 @@ from . import views
 
 urlpatterns = [
     path('weather', views.weather, name='weather'),
-    path('city/<int:id>', views.city, name='city')
+    path('city/<int:id>', views.city, name='city'),
+    path('auth/jwt', views.auth, name='api_token_auth'),
 ]
