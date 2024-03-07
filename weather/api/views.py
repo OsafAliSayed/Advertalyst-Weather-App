@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
 
-from .models import Cities
+from .models import City
 from .key import KEY
 
 
@@ -53,14 +53,14 @@ def city(request, id):
     # handling GET Request
     if request.method == 'GET':
         try:
-            city = Cities.objects.get(id=id)
+            city = City.objects.get(id=id)
             print(city)
             return JsonResponse({"example" : {
                 "id": city.id,
                 "name": city.name, 
                 "country": city.country
             }}, status=200)
-        except Cities.DoesNotExist:
+        except City.DoesNotExist:
             return JsonResponse({ "example": {
                 "error": "City not found"
             }}, status=404)
@@ -69,7 +69,7 @@ def city(request, id):
     if request.method == 'PUT':
         try:
             # get relevant city
-            city = Cities.objects.get(id=id)
+            city = City.objects.get(id=id)
             body = json.loads(request.body.decode('utf-8'))
             
             if 'example' in body:
@@ -93,7 +93,7 @@ def city(request, id):
                     "country": city.country
                 }}, status=200)
                 
-        except Cities.DoesNotExist:
+        except City.DoesNotExist:
             return JsonResponse({ "example": {
                 "error": "City not found"
             }}, status=404)
@@ -102,13 +102,13 @@ def city(request, id):
     if request.method == 'DELETE':
         try:
             # Get relevant city and delete it
-            city = Cities.objects.get(id=id)
+            city = City.objects.get(id=id)
             city.delete()
             return JsonResponse({ "example": {
                 "message": "City deleted"
             }}, status=200)
             
-        except Cities.DoesNotExist:
+        except City.DoesNotExist:
             return JsonResponse({ "example": {
                 "error": "City not found"
             }}, status=404)
