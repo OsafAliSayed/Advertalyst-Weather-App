@@ -12,8 +12,12 @@ app.autodiscover_tasks()
 from celery.schedules import crontab
 
 app.conf.beat_schedule = {
-    'update-weather-every-hour': {
+     'update-weather-every-hour': {
         'task': 'api.tasks.update_weather',
         'schedule': crontab(minute=0),  # Execute every hour
+    },
+    'check-system-every-30-seconds': {
+        'task': 'api.tasks.update_weather',
+        'schedule': 30.0,  # Execute every 30 seconds
     },
 }
