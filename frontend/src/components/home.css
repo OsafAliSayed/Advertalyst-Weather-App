@@ -1,0 +1,8 @@
+.card-holder {
+    border: 2px solid black;
+    height: 90vh;
+    margin: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

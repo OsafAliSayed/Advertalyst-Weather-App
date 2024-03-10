@@ -17,20 +17,20 @@ from .key import KEY
 
 def weather(request):
     # get cities from request
-    cities = []
+    cities = City.objects.all()
     
     # check if cities where passed in
-    if request.GET.getlist('cities'):
-        cities = request.GET.getlist('cities')[0].split(',')
-    else:
-        return JsonResponse({'error': 'no cities provided'}, status=400)
+    # if request.GET.getlist('cities'):
+    #     cities = request.GET.getlist('cities')[0].split(',')
+    # else:
+    #     return JsonResponse({'error': 'no cities provided'}, status=400)
     
     # create a dict to hold the response
     res = {}
     objs = []
     # query weatherapi.com for city weathers http://api.weatherapi.com/v1
     for city in cities:
-        url = f'https://api.weatherapi.com/v1/current.json?key={KEY}&q={city}'
+        url = f'https://api.weatherapi.com/v1/current.json?key={KEY}&q={city.name}'
         response = requests.get(url)
         if response.status_code == 500:
             # check if weather information has been stored locally
